@@ -2,7 +2,7 @@ module github.com/daveshanley/vacuum
 
 go 1.23.0
 
-replace github.com/pb33f/libopenapi => github.com/speakeasy-api/libopenapi v0.0.0-20240925193718-287455220625
+replace github.com/pb33f/libopenapi => github.com/speakeasy-api/libopenapi v0.0.0-20240925212222-dd8e2d56572a
 
 require (
 	github.com/alecthomas/chroma v0.10.0
