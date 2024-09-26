@@ -2,6 +2,8 @@ package core
 
 import (
 	"context"
+	"testing"
+
 	"github.com/daveshanley/vacuum/model"
 	highBase "github.com/pb33f/libopenapi/datamodel/high/base"
 	"github.com/pb33f/libopenapi/datamodel/low"
@@ -9,7 +11,6 @@ import (
 	"github.com/pb33f/libopenapi/utils"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
-	"testing"
 )
 
 func TestOpenAPISchema_GetSchema(t *testing.T) {
@@ -24,7 +25,6 @@ func TestOpenAPISchema_RunRule(t *testing.T) {
 }
 
 func TestOpenAPISchema_DuplicateEntryInEnum(t *testing.T) {
-
 	yml := `components:
   schemas:
     Color:
@@ -73,11 +73,9 @@ uniqueItems: true`
 
 	assert.Len(t, res, 1)
 	assert.Equal(t, "Enum values must not have duplicate entry: items at index 0 and 2 are equal", res[0].Message)
-
 }
 
 func TestOpenAPISchema_InvalidSchemaInteger(t *testing.T) {
-
 	yml := `smell: not a number`
 
 	path := "$"
@@ -116,19 +114,17 @@ func TestOpenAPISchema_InvalidSchemaInteger(t *testing.T) {
 
 	assert.Len(t, res, 1)
 	assert.Equal(t, "schema must be valid: expected integer, but got string", res[0].Message)
-
 }
 
 func testGenerateJSONSchema(node *yaml.Node) *highBase.Schema {
 	sch := lowBase.Schema{}
 	_ = low.BuildModel(node, &sch)
 	_ = sch.Build(context.Background(), node, nil)
-	highSch := highBase.NewSchema(&sch)
+	highSch := highBase.NewSchema(&sch, nil)
 	return highSch
 }
 
 func TestOpenAPISchema_InvalidSchemaBoolean(t *testing.T) {
-
 	yml := `smell:
   stank: not a bool`
 
@@ -177,11 +173,9 @@ properties:
 
 	assert.Len(t, res, 1)
 	assert.Equal(t, "schema must be valid: expected boolean, but got string", res[0].Message)
-
 }
 
 func TestOpenAPISchema_MissingFieldForceValidation(t *testing.T) {
-
 	yml := `eliminate:
   cyberhacks: not a bool`
 
@@ -231,5 +225,4 @@ properties:
 
 	assert.Len(t, res, 1)
 	assert.Equal(t, "schema must be valid: `lolly`, is missing and is required", res[0].Message)
-
 }

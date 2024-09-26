@@ -186,7 +186,7 @@ func ConvertNodeIntoJSONSchema(node *yaml.Node, idx *index.SpecIndex) (*highBase
 	if schErr != nil {
 		return nil, schErr
 	}
-	highSch := highBase.NewSchema(&sch)
+	highSch := highBase.NewSchema(&sch, idx)
 	return highSch, nil
 }
 
@@ -205,7 +205,6 @@ func ConvertNodeDefinitionIntoSchema(node *yaml.Node) (*Schema, error) {
 		}
 		var schema Schema
 		err = yaml.Unmarshal(dat, &schema)
-
 		if err != nil {
 			errChan <- err
 		}

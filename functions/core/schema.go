@@ -6,6 +6,8 @@ package core
 import (
 	ctx "context"
 	"fmt"
+	"strings"
+
 	"github.com/daveshanley/vacuum/model"
 	"github.com/daveshanley/vacuum/parser"
 	vacuumUtils "github.com/daveshanley/vacuum/utils"
@@ -16,12 +18,10 @@ import (
 	lowBase "github.com/pb33f/libopenapi/datamodel/low/base"
 	"github.com/pb33f/libopenapi/utils"
 	"gopkg.in/yaml.v3"
-	"strings"
 )
 
 // Schema is a rule that creates a schema check against a field value
-type Schema struct {
-}
+type Schema struct{}
 
 // GetSchema returns a model.RuleFunctionSchema defining the schema of the OperationParameters rule.
 func (sch Schema) GetSchema() model.RuleFunctionSchema {
@@ -57,7 +57,6 @@ func (sch Schema) GetCategory() string {
 
 // RunRule will execute the Schema function
 func (sch Schema) RunRule(nodes []*yaml.Node, context model.RuleFunctionContext) []model.RuleFunctionResult {
-
 	if len(nodes) <= 0 {
 		return nil
 	}
@@ -88,7 +87,6 @@ func (sch Schema) RunRule(nodes []*yaml.Node, context model.RuleFunctionContext)
 		// unmarshal the schema
 		var on yaml.Node
 		err := on.Encode(&s)
-
 		if err != nil {
 			r := model.BuildFunctionResultString(
 				vacuumUtils.SuppliedOrDefault(message, fmt.Sprintf("unable to parse function options: %s", err.Error())))
@@ -120,7 +118,7 @@ func (sch Schema) RunRule(nodes []*yaml.Node, context model.RuleFunctionContext)
 		}
 
 		// now, build the high level schema
-		schema = highBase.NewSchema(&lowSchema)
+		schema = highBase.NewSchema(&lowSchema, context.Index)
 	}
 
 	// use the current node to validate (field not needed)
@@ -183,8 +181,8 @@ func (sch Schema) RunRule(nodes []*yaml.Node, context model.RuleFunctionContext)
 var bannedErrors = []string{"if-then failed", "if-else failed", "allOf failed", "oneOf failed"}
 
 func validateNodeAgainstSchema(ctx *model.RuleFunctionContext, schema *highBase.Schema, field *yaml.Node,
-	context model.RuleFunctionContext, x int) []model.RuleFunctionResult {
-
+	context model.RuleFunctionContext, x int,
+) []model.RuleFunctionResult {
 	ruleMessage := context.Rule.Description
 	if context.Rule.Message != "" {
 		ruleMessage = context.Rule.Message
